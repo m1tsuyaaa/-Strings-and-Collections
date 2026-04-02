@@ -19,6 +19,7 @@ class Program
     int ThirdGroupStart;
     int ThirdGroupLength;
     int StartIndex;
+    int ZeroValue;
 
     PhoneLengthNew = 11;
     PhoneLengthOld = 10;
@@ -31,6 +32,7 @@ class Program
     ThirdGroupStart = 8;
     ThirdGroupLength = 2;
     StartIndex = 1;
+    ZeroValue = 0;
 
     Dictionary<string, List<string>> mistakeDict;
     mistakeDict = new Dictionary<string, List<string>>();
@@ -86,52 +88,56 @@ class Program
     files = Directory.GetFiles(directoryPath, "*.txt");
 
     int fileIndex;
-    fileIndex = 0;
+    fileIndex = ZeroValue;
+
+    string filePath;
+    string content;
+    string[] words;
+    string[] dictionaryKeys;
+    int wordIndex;
+    string currentWord;
+    string cleanedWord;
+    int keyIndex;
+    string correctWord;
+    List<string> mistakeList;
+    int mistakeIndex;
+    string currentMistake;
+    string correctedContent;
+    string phonePattern;
+    string finalContent;
+    string phoneNumber;
+    string onlyDigits;
+    string convertedPhone;
 
     while (fileIndex < files.Length)
     {
-      string filePath;
       filePath = files[fileIndex];
       Console.WriteLine("\nProcessing file: " + Path.GetFileName(filePath));
 
-      string content;
       content = File.ReadAllText(filePath, Encoding.UTF8);
 
-      string[] words;
       words = content.Split(' ');
-
-      string[] dictionaryKeys;
       dictionaryKeys = new string[mistakeDict.Count];
-      mistakeDict.Keys.CopyTo(dictionaryKeys, 0);
+      mistakeDict.Keys.CopyTo(dictionaryKeys, ZeroValue);
 
-      int wordIndex;
-      wordIndex = 0;
+      wordIndex = ZeroValue;
 
       while (wordIndex < words.Length)
       {
-        string currentWord;
         currentWord = words[wordIndex];
-
-        string cleanedWord;
         cleanedWord = Regex.Replace(currentWord, @"[^\w\-]", "");
 
-        int keyIndex;
-        keyIndex = 0;
+        keyIndex = ZeroValue;
 
         while (keyIndex < dictionaryKeys.Length)
         {
-          string correctWord;
           correctWord = dictionaryKeys[keyIndex];
-
-          List<string> mistakeList;
           mistakeList = mistakeDict[correctWord];
 
-          int mistakeIndex;
-          mistakeIndex = 0;
+          mistakeIndex = ZeroValue;
 
           while (mistakeIndex < mistakeList.Count)
           {
-            string currentMistake;
             currentMistake = mistakeList[mistakeIndex];
 
             if (cleanedWord.Equals(currentMistake, StringComparison.OrdinalIgnoreCase))
@@ -146,24 +152,17 @@ class Program
         wordIndex += StartIndex;
       }
 
-      string correctedContent;
       correctedContent = string.Join(" ", words);
 
-      string phonePattern;
       phonePattern = @"\(\d{3}\)\s*\d{3}-\d{2}-\d{2}";
 
-      string finalContent;
       finalContent = Regex.Replace(correctedContent, phonePattern, delegate (System.Text.RegularExpressions.Match match)
       {
-        string phoneNumber;
         phoneNumber = match.Value;
-
-        string onlyDigits;
         onlyDigits = Regex.Replace(phoneNumber, @"\D", "");
 
         if ((onlyDigits.Length == PhoneLengthNew) || (onlyDigits.Length == PhoneLengthOld))
         {
-          string convertedPhone;
           convertedPhone = "+380 "
             + onlyDigits.Substring(OperatorStart, OperatorLength) + " "
             + onlyDigits.Substring(FirstGroupStart, FirstGroupLength) + " "
