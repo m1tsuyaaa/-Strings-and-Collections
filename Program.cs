@@ -6,194 +6,190 @@ using System.Text.RegularExpressions;
 
 class Program
 {
-  static Dictionary<string, List<string>> mistakeDict;
-  static string directoryPath;
-  static string[] files;
-  static int fileIndex;
-  static string filePath;
-  static string content;
-  static string correctedContent;
-  static string finalContent;
-  static string[] words;
-  static int wordIndex;
-  static string word;
-  static string cleanWord;
-  static string correctWord;
-  static List<string> mistakes;
-  static int mistakeIndex;
-  static string mistake;
-  static string result;
-  static Match digitsMatch;
-  static string allDigits;
-  static string newPhone;
-  static string[] keys;
-  static int keyIndex;
-  static string phone;
-  static int phoneLength1;
-  static int phoneLength2;
-  static int startIndex1;
-  static int length1;
-  static int startIndex2;
-  static int length2;
-  static int startIndex3;
-  static int length3;
-  static int startIndex4;
-  static int length4;
-
   static void Main()
   {
+    int PhoneLengthNew;
+    int PhoneLengthOld;
+    int OperatorStart;
+    int OperatorLength;
+    int FirstGroupStart;
+    int FirstGroupLength;
+    int SecondGroupStart;
+    int SecondGroupLength;
+    int ThirdGroupStart;
+    int ThirdGroupLength;
+    int StartIndex;
+
+    PhoneLengthNew = 11;
+    PhoneLengthOld = 10;
+    OperatorStart = 1;
+    OperatorLength = 2;
+    FirstGroupStart = 3;
+    FirstGroupLength = 3;
+    SecondGroupStart = 6;
+    SecondGroupLength = 2;
+    ThirdGroupStart = 8;
+    ThirdGroupLength = 2;
+    StartIndex = 1;
+
+    Dictionary<string, List<string>> mistakeDict;
     mistakeDict = new Dictionary<string, List<string>>();
 
-    InitializeMistakeDictionary();
+    List<string> mistakesForHello;
+    mistakesForHello = new List<string>();
+    mistakesForHello.Add("првиет");
+    mistakesForHello.Add("пирвет");
+    mistakesForHello.Add("превет");
+    mistakesForHello.Add("привт");
+    mistakeDict.Add("привет", mistakesForHello);
 
-    Console.Write("Введите путь к папке с текстовыми файлами: ");
+    List<string> mistakesForBye;
+    mistakesForBye = new List<string>();
+    mistakesForBye.Add("поке");
+    mistakesForBye.Add("пака");
+    mistakesForBye.Add("поко");
+    mistakeDict.Add("пока", mistakesForBye);
+
+    List<string> mistakesForShop;
+    mistakesForShop = new List<string>();
+    mistakesForShop.Add("магазен");
+    mistakesForShop.Add("магазинн");
+    mistakesForShop.Add("магозин");
+    mistakeDict.Add("магазин", mistakesForShop);
+
+    List<string> mistakesForComputer;
+    mistakesForComputer = new List<string>();
+    mistakesForComputer.Add("кампютер");
+    mistakesForComputer.Add("компютер");
+    mistakesForComputer.Add("компьютерр");
+    mistakeDict.Add("компьютер", mistakesForComputer);
+
+    List<string> mistakesForWork;
+    mistakesForWork = new List<string>();
+    mistakesForWork.Add("работаа");
+    mistakesForWork.Add("робота");
+    mistakesForWork.Add("работо");
+    mistakeDict.Add("работа", mistakesForWork);
+
+    Console.Write("Enter path to folder with text files: ");
+    string directoryPath;
     directoryPath = Console.ReadLine();
-
-    phoneLength1 = 11;
-    phoneLength2 = 10;
-    startIndex1 = 1;
-    length1 = 2;
-    startIndex2 = 3;
-    length2 = 3;
-    startIndex3 = 6;
-    length3 = 2;
-    startIndex4 = 8;
-    length4 = 2;
 
     if (Directory.Exists(directoryPath) == false)
     {
-      Console.WriteLine("Директория не найдена!");
+      Console.WriteLine("Directory not found!");
       Console.ReadKey();
       return;
     }
 
+    string[] files;
     files = Directory.GetFiles(directoryPath, "*.txt");
 
+    int fileIndex;
     fileIndex = 0;
+
     while (fileIndex < files.Length)
     {
+      string filePath;
       filePath = files[fileIndex];
-      Console.WriteLine("\nОбработка файла: " + Path.GetFileName(filePath));
-      ProcessFile();
-      fileIndex += 1;
-    }
+      Console.WriteLine("\nProcessing file: " + Path.GetFileName(filePath));
 
-    Console.WriteLine("\nГотово!");
-    Console.ReadKey();
-  }
+      string content;
+      content = File.ReadAllText(filePath, Encoding.UTF8);
 
-  static void InitializeMistakeDictionary()
-  {
-    List<string> mistakes1 = new List<string>();
-    mistakes1.Add("првиет");
-    mistakes1.Add("пирвет");
-    mistakes1.Add("превет");
-    mistakes1.Add("привт");
-    mistakeDict.Add("привет", mistakes1);
+      string[] words;
+      words = content.Split(' ');
 
-    List<string> mistakes2 = new List<string>();
-    mistakes2.Add("поке");
-    mistakes2.Add("пака");
-    mistakes2.Add("поко");
-    mistakeDict.Add("пока", mistakes2);
+      string[] dictionaryKeys;
+      dictionaryKeys = new string[mistakeDict.Count];
+      mistakeDict.Keys.CopyTo(dictionaryKeys, 0);
 
-    List<string> mistakes3 = new List<string>();
-    mistakes3.Add("магазен");
-    mistakes3.Add("магазинн");
-    mistakes3.Add("магозин");
-    mistakeDict.Add("магазин", mistakes3);
+      int wordIndex;
+      wordIndex = 0;
 
-    List<string> mistakes4 = new List<string>();
-    mistakes4.Add("кампютер");
-    mistakes4.Add("компютер");
-    mistakes4.Add("компьютерр");
-    mistakeDict.Add("компьютер", mistakes4);
-
-    List<string> mistakes5 = new List<string>();
-    mistakes5.Add("работаа");
-    mistakes5.Add("робота");
-    mistakes5.Add("работо");
-    mistakeDict.Add("работа", mistakes5);
-  }
-
-  static void ProcessFile()
-  {
-    content = File.ReadAllText(filePath, Encoding.UTF8);
-
-    correctedContent = FixMistakes();
-    finalContent = FixPhoneNumbers();
-
-    if (content != finalContent)
-    {
-      File.WriteAllText(filePath, finalContent, Encoding.UTF8);
-      Console.WriteLine("  Изменения сохранены.");
-    }
-    else
-    {
-      Console.WriteLine("  Изменений не потребовалось.");
-    }
-  }
-
-  static string FixMistakes()
-  {
-    words = content.Split(' ');
-    keys = new string[mistakeDict.Count];
-    mistakeDict.Keys.CopyTo(keys, 0);
-
-    wordIndex = 0;
-    while (wordIndex < words.Length)
-    {
-      word = words[wordIndex];
-      cleanWord = Regex.Replace(word, @"[^\w\-]", "");
-
-      keyIndex = 0;
-      while (keyIndex < keys.Length)
+      while (wordIndex < words.Length)
       {
-        correctWord = keys[keyIndex];
-        mistakes = mistakeDict[correctWord];
+        string currentWord;
+        currentWord = words[wordIndex];
 
-        mistakeIndex = 0;
-        while (mistakeIndex < mistakes.Count)
+        string cleanedWord;
+        cleanedWord = Regex.Replace(currentWord, @"[^\w\-]", "");
+
+        int keyIndex;
+        keyIndex = 0;
+
+        while (keyIndex < dictionaryKeys.Length)
         {
-          mistake = mistakes[mistakeIndex];
+          string correctWord;
+          correctWord = dictionaryKeys[keyIndex];
 
-          if (cleanWord.Equals(mistake, StringComparison.OrdinalIgnoreCase))
+          List<string> mistakeList;
+          mistakeList = mistakeDict[correctWord];
+
+          int mistakeIndex;
+          mistakeIndex = 0;
+
+          while (mistakeIndex < mistakeList.Count)
           {
-            words[wordIndex] = word.Replace(cleanWord, correctWord);
-            Console.WriteLine("    Исправлено: " + mistake + " -> " + correctWord);
+            string currentMistake;
+            currentMistake = mistakeList[mistakeIndex];
+
+            if (cleanedWord.Equals(currentMistake, StringComparison.OrdinalIgnoreCase))
+            {
+              words[wordIndex] = currentWord.Replace(cleanedWord, correctWord);
+              Console.WriteLine("    Fixed: " + currentMistake + " -> " + correctWord);
+            }
+            mistakeIndex = mistakeIndex + 1;
           }
-          mistakeIndex += 1;
+          keyIndex = keyIndex + 1;
         }
-        keyIndex += 1;
+        wordIndex = wordIndex + 1;
       }
-      wordIndex += 1;
+
+      string correctedContent;
+      correctedContent = string.Join(" ", words);
+
+      string phonePattern;
+      phonePattern = @"\(\d{3}\)\s*\d{3}-\d{2}-\d{2}";
+
+      string finalContent;
+      finalContent = Regex.Replace(correctedContent, phonePattern, delegate (System.Text.RegularExpressions.Match match)
+      {
+        string phoneNumber;
+        phoneNumber = match.Value;
+
+        string onlyDigits;
+        onlyDigits = Regex.Replace(phoneNumber, @"\D", "");
+
+        if ((onlyDigits.Length == PhoneLengthNew) || (onlyDigits.Length == PhoneLengthOld))
+        {
+          string convertedPhone;
+          convertedPhone = "+380 "
+            + onlyDigits.Substring(OperatorStart, OperatorLength) + " "
+            + onlyDigits.Substring(FirstGroupStart, FirstGroupLength) + " "
+            + onlyDigits.Substring(SecondGroupStart, SecondGroupLength) + " "
+            + onlyDigits.Substring(ThirdGroupStart, ThirdGroupLength);
+          Console.WriteLine("    Phone: " + phoneNumber + " -> " + convertedPhone);
+          return convertedPhone;
+        }
+
+        return phoneNumber;
+      });
+
+      if (content != finalContent)
+      {
+        File.WriteAllText(filePath, finalContent, Encoding.UTF8);
+        Console.WriteLine("  Changes saved.");
+      }
+      else
+      {
+        Console.WriteLine("  No changes needed.");
+      }
+
+      fileIndex = fileIndex + 1;
     }
 
-    return string.Join(" ", words);
-  }
-
-  static string FixPhoneNumbers()
-  {
-    result = Regex.Replace(correctedContent, @"\(\d{3}\)\s*\d{3}-\d{2}-\d{2}", delegate (System.Text.RegularExpressions.Match match)
-    {
-      phone = match.Value;
-      digitsMatch = Regex.Match(phone, @"\d+");
-
-      if (digitsMatch.Success)
-      {
-        allDigits = Regex.Replace(phone, @"\D", "");
-
-        if ((allDigits.Length == phoneLength1) || (allDigits.Length == phoneLength2))
-        {
-          newPhone = "+380 " + allDigits.Substring(startIndex1, length1) + " " + allDigits.Substring(startIndex2, length2) + " " + allDigits.Substring(startIndex3, length3) + " " + allDigits.Substring(startIndex4, length4);
-          Console.WriteLine("    Телефон: " + phone + " -> " + newPhone);
-          return newPhone;
-        }
-      }
-
-      return phone;
-    });
-
-    return result;
+    Console.WriteLine("\nDone!");
+    Console.ReadKey();
   }
 }
