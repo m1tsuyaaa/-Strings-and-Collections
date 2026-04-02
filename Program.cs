@@ -139,11 +139,11 @@ class Program
               words[wordIndex] = currentWord.Replace(cleanedWord, correctWord);
               Console.WriteLine("    Fixed: " + currentMistake + " -> " + correctWord);
             }
-            mistakeIndex = mistakeIndex + 1;
+            mistakeIndex += StartIndex;
           }
-          keyIndex = keyIndex + 1;
+          keyIndex += StartIndex;
         }
-        wordIndex = wordIndex + 1;
+        wordIndex += StartIndex;
       }
 
       string correctedContent;
@@ -186,10 +186,10 @@ class Program
         Console.WriteLine("  No changes needed.");
       }
 
-      fileIndex = fileIndex + 1;
+      fileIndex += StartIndex;
     }
 
-    Console.WriteLine("\nDone!");
+    Console.WriteLine("\nDone!!");
     Console.ReadKey();
   }
 }
